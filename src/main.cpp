@@ -2,13 +2,15 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <unistd.h>
 
 using namespace std;
 
 // Constants
 const string BUILTIN_COMMANDS[] = {"exit", "echo", "type"};
-
+const char *pathEnv = getenv("PATH");
 // Utility Functions
+
 vector<string> splitString(const string &str, char delimiter) {
     vector<string> tokens;
     string token;
@@ -19,6 +21,22 @@ vector<string> splitString(const string &str, char delimiter) {
     }
 
     return tokens;
+}
+
+string findExecutable(const string &command) {
+    if (!pathEnv)
+        return "";
+
+    vector<string> paths = splitString(pathEnv, ':');
+
+    for (const string &dir: paths) {
+        string fullPath = dir + "/" + command;
+
+        if (access(fullPath.c_str(), X_OK) == 0)
+            return fullPath;
+    }
+
+    return "";
 }
 
 // Command Handlers
@@ -46,10 +64,13 @@ void handleTypeCommand(const vector<string> &args) {
 
     const string &searchedCommand = args[1];
 
-    for (const string &cmd : BUILTIN_COMMANDS) {
+    for (const string &cmd: BUILTIN_COMMANDS) {
         if (cmd == searchedCommand) {
             cout << searchedCommand << " is a shell builtin" << endl;
             return;
+        }
+        if (string pathTo = findExecutable(searchedCommand); !pathTo.empty()) {
+            cout << "valid_command is " << pathTo << endl;
         }
     }
 
@@ -80,6 +101,7 @@ void processCommand(const string &input) {
         handleUnknownCommand(input);
     }
 }
+
 
 // Main Loop
 int main() {
