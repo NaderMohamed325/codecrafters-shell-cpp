@@ -9,7 +9,9 @@ int main() {
         cout << "$ ";
         string command;
         cin >> command;
-
+        if ( command == "exit" ) {
+            exit(0);
+        }
         cout << command << ": command not found" << endl;
     }
 }
