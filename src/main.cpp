@@ -39,14 +39,21 @@ void handleEchoCommand(const vector<string> &args) {
 }
 
 void handleTypeCommand(const vector<string> &args) {
-    if (args.size() > 1) {
-        const string &searchedCommand = args[1];
-        int index =BUILTIN_COMMANDS->find(searchedCommand);
-        if (index>=0)
-        cout << searchedCommand << " is a shell builtin" << endl;
-    } else {
+    if (args.size() <= 1) {
         cout << "Invalid syntax" << endl;
+        return;
     }
+
+    const string &searchedCommand = args[1];
+
+    for (const string &cmd : BUILTIN_COMMANDS) {
+        if (cmd == searchedCommand) {
+            cout << searchedCommand << " is a shell builtin" << endl;
+            return;
+        }
+    }
+
+    cout << searchedCommand << ": not found" << endl;
 }
 
 void handleUnknownCommand(const string &input) {
