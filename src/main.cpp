@@ -150,7 +150,7 @@ void processCommand(const string &input) {
 }
 
 // Main Loop
-int main() {
+[[noreturn]] int main() {
     // Set output buffers to flush immediately
     cout << unitbuf;
     cerr << unitbuf;
@@ -164,6 +164,4 @@ int main() {
 
         processCommand(input);
     }
-
-    return 0;
 }
