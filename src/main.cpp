@@ -70,7 +70,7 @@ void handleTypeCommand(const vector<string> &args) {
             return;
         }
         if (string pathTo = findExecutable(searchedCommand); !pathTo.empty()) {
-            cout << "valid_command is " << pathTo << endl;
+            cout << searchedCommand<<" is " << pathTo << endl;
         }
     }
 
