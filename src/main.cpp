@@ -3,14 +3,15 @@
 #include <vector>
 #include <sstream>
 #include <unistd.h>
+#include <sys/wait.h>
 
 using namespace std;
 
 // Constants
 const string BUILTIN_COMMANDS[] = {"exit", "echo", "type"};
-const char *pathEnv = getenv("PATH");
-// Utility Functions
+const char *PATH_ENV = getenv("PATH");
 
+// Utility Functions
 vector<string> splitString(const string &str, char delimiter) {
     vector<string> tokens;
     string token;
@@ -24,16 +25,18 @@ vector<string> splitString(const string &str, char delimiter) {
 }
 
 string findExecutable(const string &command) {
-    if (!pathEnv)
+    if (!PATH_ENV) {
         return "";
+    }
 
-    vector<string> paths = splitString(pathEnv, ':');
+    vector<string> paths = splitString(PATH_ENV, ':');
 
-    for (const string &dir: paths) {
+    for (const string &dir : paths) {
         string fullPath = dir + "/" + command;
 
-        if (access(fullPath.c_str(), X_OK) == 0)
+        if (access(fullPath.c_str(), X_OK) == 0) {
             return fullPath;
+        }
     }
 
     return "";
@@ -79,8 +82,49 @@ void handleTypeCommand(const vector<string> &args) {
     // Not found
     cout << searchedCommand << ": not found" << endl;
 }
-void handleUnknownCommand(const string &input) {
-    cout << input << ": command not found" << endl;
+
+bool isBuiltinCommand(const string &command) {
+    for (const string &cmd : BUILTIN_COMMANDS) {
+        if (cmd == command) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void executeExternalCommand(const vector<string> &args) {
+    const string &command = args[0];
+    string executablePath = findExecutable(command);
+
+    if (executablePath.empty()) {
+        cout << command << ": command not found" << endl;
+        return;
+    }
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // Child process
+        vector<char *> argv;
+        for (const string &arg : args) {
+            argv.push_back(const_cast<char *>(arg.c_str()));
+        }
+        argv.push_back(nullptr);
+
+        execv(executablePath.c_str(), argv.data());
+
+        // If execv returns, it failed
+        perror("execv failed");
+        exit(1);
+    }
+    if (pid > 0) {
+        // Parent process
+        int status;
+        waitpid(pid, &status, 0);
+    } else {
+        // Fork failed
+        perror("fork failed");
+    }
 }
 
 // Command Processing
@@ -93,6 +137,7 @@ void processCommand(const string &input) {
 
     const string &command = args[0];
 
+    // Handle built-in commands
     if (command == "exit") {
         handleExitCommand();
     } else if (command == "echo") {
@@ -100,10 +145,9 @@ void processCommand(const string &input) {
     } else if (command == "type") {
         handleTypeCommand(args);
     } else {
-        handleUnknownCommand(input);
+        executeExternalCommand(args);
     }
 }
-
 
 // Main Loop
 int main() {
