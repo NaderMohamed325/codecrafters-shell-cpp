@@ -3,11 +3,13 @@ using namespace std;
 
 int main() {
     // Flush after every std::cout / std:cerr
-    cout << std::unitbuf;
-    cerr << std::unitbuf;
-    cout << "$ ";
-    string command;
-    cin >> command;
+    while (true) {
+        cout << std::unitbuf;
+        cerr << std::unitbuf;
+        cout << "$ ";
+        string command;
+        cin >> command;
 
-    cout << command << ": command not found" << endl;
+        cout << command << ": command not found" << endl;
+    }
 }
