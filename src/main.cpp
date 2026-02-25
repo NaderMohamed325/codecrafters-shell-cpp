@@ -64,19 +64,21 @@ void handleTypeCommand(const vector<string> &args) {
 
     const string &searchedCommand = args[1];
 
-    for (const string &cmd: BUILTIN_COMMANDS) {
+    for (const string &cmd : BUILTIN_COMMANDS) {
         if (cmd == searchedCommand) {
             cout << searchedCommand << " is a shell builtin" << endl;
             return;
         }
-        if (string pathTo = findExecutable(searchedCommand); !pathTo.empty()) {
-            cout << searchedCommand<<" is " << pathTo << endl;
-        }
     }
 
+    if (const string pathTo = findExecutable(searchedCommand); !pathTo.empty()) {
+        cout << searchedCommand << " is " << pathTo << endl;
+        return;
+    }
+
+    // Not found
     cout << searchedCommand << ": not found" << endl;
 }
-
 void handleUnknownCommand(const string &input) {
     cout << input << ": command not found" << endl;
 }
