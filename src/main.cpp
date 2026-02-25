@@ -5,10 +5,10 @@
 
 using namespace std;
 
-
+// Constants
 const string BUILTIN_COMMANDS[] = {"exit", "echo", "type"};
 
-
+// Utility Functions
 vector<string> splitString(const string &str, char delimiter) {
     vector<string> tokens;
     string token;
@@ -21,7 +21,7 @@ vector<string> splitString(const string &str, char delimiter) {
     return tokens;
 }
 
-
+// Command Handlers
 void handleExitCommand() {
     exit(0);
 }
@@ -41,9 +41,9 @@ void handleEchoCommand(const vector<string> &args) {
 void handleTypeCommand(const vector<string> &args) {
     if (args.size() > 1) {
         const string &searchedCommand = args[1];
-        int exists = BUILTIN_COMMANDS->find(searchedCommand);
-        if (exists >= 0)
-            cout << searchedCommand << " is a shell builtin" << endl;
+        int index =BUILTIN_COMMANDS->find(searchedCommand);
+        if (index>=0)
+        cout << searchedCommand << " is a shell builtin" << endl;
     } else {
         cout << "Invalid syntax" << endl;
     }
@@ -53,15 +53,17 @@ void handleUnknownCommand(const string &input) {
     cout << input << ": command not found" << endl;
 }
 
-
+// Command Processing
 void processCommand(const string &input) {
-    const vector<string> args = splitString(input, ' ');
+    vector<string> args = splitString(input, ' ');
 
     if (args.empty()) {
         return;
     }
 
-    if (const string &command = args[0]; command == "exit") {
+    const string &command = args[0];
+
+    if (command == "exit") {
         handleExitCommand();
     } else if (command == "echo") {
         handleEchoCommand(args);
@@ -73,11 +75,12 @@ void processCommand(const string &input) {
 }
 
 // Main Loop
-[[noreturn]] int main() {
+int main() {
+    // Set output buffers to flush immediately
     cout << unitbuf;
     cerr << unitbuf;
 
-
+    // REPL (Read-Eval-Print Loop)
     while (true) {
         cout << "$ ";
 
@@ -86,4 +89,6 @@ void processCommand(const string &input) {
 
         processCommand(input);
     }
+
+    return 0;
 }
