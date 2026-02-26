@@ -55,8 +55,9 @@ void processCommand(const string &input) {
             if (args.size() > 1) {
                 if (args[1] == "~") {
                     moveToHome();
+                } else {
+                    handleCdCommand(args[1].c_str());
                 }
-                handleCdCommand(args[1].c_str());
             } else {
                 moveToHome();
             }
