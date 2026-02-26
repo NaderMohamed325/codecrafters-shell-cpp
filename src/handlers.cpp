@@ -5,7 +5,7 @@
 using namespace std;
 
 // Constants
-const string BUILTIN_COMMANDS[] = {"exit", "echo", "type"};
+const string BUILTIN_COMMANDS[] = {"exit", "echo", "type","pwd"};
 const char *PATH_ENV = getenv("PATH");
 
 // Forward declarations of utility functions
