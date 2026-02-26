@@ -5,7 +5,7 @@
 using namespace std;
 
 // Constants
-const string BUILTIN_COMMANDS[] = {"exit", "echo", "type","pwd"};
+const string BUILTIN_COMMANDS[] = {"exit", "echo", "type","pwd","cd"};
 const char *PATH_ENV = getenv("PATH");
 
 // Forward declarations of utility functions
@@ -31,9 +31,7 @@ string findExecutable(const string &command) {
         return "";
     }
 
-    vector<string> paths = splitString(PATH_ENV, ':');
-
-    for (const string &dir: paths) {
+    for (vector<string> paths = splitString(PATH_ENV, ':'); const string &dir: paths) {
         string fullPath = dir + "/" + command;
 
         if (access(fullPath.c_str(), X_OK) == 0) {
@@ -94,6 +92,20 @@ void handlePwdCommand() {
     }
 }
 
+void moveToHome() {
+    const char *home = getenv("HOME");
+    if (home != nullptr) {
+        handleCdCommand(home);
+    } else {
+        std::cerr << "HOME not set\n";
+    }
+}
+
+void handleCdCommand(const char * path) {
+    if (chdir(path)!=0) {
+        perror("chdir failed");
+    }
+}
 void executeExternalCommand(const vector<string> &args) {
     const string &command = args[0];
     string executablePath = findExecutable(command);
