@@ -103,7 +103,7 @@ void moveToHome() {
 
 void handleCdCommand(const char * path) {
     if (chdir(path)!=0) {
-        perror("chdir failed");
+        perror("chdir failed: No such file or directory");
     }
 }
 void executeExternalCommand(const vector<string> &args) {
