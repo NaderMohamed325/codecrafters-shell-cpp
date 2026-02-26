@@ -56,10 +56,13 @@ void handleEchoCommand(const string &input) {
     echo 'hello''world'	helloworld	Adjacent quoted strings 'hello' and 'world' are concatenated.
     echo hello''world	helloworld	Empty quotes '' are ignored.
  */
+
+    string trimmedInput = input.substr(5);
+
     bool inQuotes = false;
     string output;
 
-    for (char ch: input) {
+    for (char ch: trimmedInput) {
         if (ch == '\'') {
             inQuotes = !inQuotes;
         } else if (ch == ' ' && !inQuotes) {
