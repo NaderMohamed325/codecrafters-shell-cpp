@@ -102,7 +102,7 @@ void moveToHome() {
 
 void handleCdCommand(const char *path) {
     if (chdir(path) != 0) {
-        cerr << "cd: " << path << ": No such file or directory" << endl;
+        cout << "cd: " << path << ": No such file or directory" << endl;
     }
 }
 
