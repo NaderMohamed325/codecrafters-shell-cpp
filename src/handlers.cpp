@@ -1,11 +1,10 @@
 #include "handlers.h"
 
 
-
 using namespace std;
 
 // Constants
-const string BUILTIN_COMMANDS[] = {"exit", "echo", "type","pwd","cd"};
+const string BUILTIN_COMMANDS[] = {"exit", "echo", "type", "pwd", "cd"};
 const char *PATH_ENV = getenv("PATH");
 
 // Forward declarations of utility functions
@@ -101,11 +100,12 @@ void moveToHome() {
     }
 }
 
-void handleCdCommand(const char * path) {
-    if (chdir(path)!=0) {
-        perror("chdir failed: No such file or directory");
+void handleCdCommand(const char *path) {
+    if (chdir(path) != 0) {
+        cerr << "cd: " << path << ": No such file or directory" << endl;
     }
 }
+
 void executeExternalCommand(const vector<string> &args) {
     const string &command = args[0];
     string executablePath = findExecutable(command);
