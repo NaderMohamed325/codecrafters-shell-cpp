@@ -46,16 +46,37 @@ void handleExitCommand() {
     exit(0);
 }
 
-void handleEchoCommand(const vector<string> &args) {
-    if (args.size() > 1) {
-        for (size_t i = 1; i < args.size(); ++i) {
-            cout << args[i];
-            if (i < args.size() - 1) {
-                cout << " ";
+void handleEchoCommand(const string &input) {
+
+/*
+    *
+    Command	Expected output	Explanation
+    echo 'hello    world'	hello    world	Spaces are preserved within quotes.
+    echo hello    world	hello world	Consecutive spaces are collapsed unless quoted.
+    echo 'hello''world'	helloworld	Adjacent quoted strings 'hello' and 'world' are concatenated.
+    echo hello''world	helloworld	Empty quotes '' are ignored.
+ */
+    bool inQuotes = false;
+    string output;
+
+    for (char ch: input) {
+        if (ch == '\'') {
+            inQuotes = !inQuotes;
+        } else if (ch == ' ' && !inQuotes) {
+            if (!output.empty() && output.back() != ' ') {
+                output += ' ';
             }
+        } else {
+            output += ch;
         }
     }
-    cout << endl;
+
+    if (!output.empty() && output.back() == ' ') {
+        output.pop_back();
+    }
+
+    cout << output << endl;
+
 }
 
 void handleTypeCommand(const vector<string> &args) {

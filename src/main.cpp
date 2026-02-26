@@ -1,7 +1,3 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <sstream>
 #include "handlers.h"
 
 using namespace std;
@@ -43,7 +39,7 @@ void processCommand(const string &input) {
             handleExitCommand();
             break;
         case Command::ECHO:
-            handleEchoCommand(args);
+            handleEchoCommand(input);
             break;
         case Command::TYPE:
             handleTypeCommand(args);
